@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.dao.SigninDao">
+    <resultMap id="StudentInfoResultMap" type="com.example.domain.StudentInfo">
+        <result column="studentNo" property="studentNo" />
+        <result column="studentName" property="studentName" />
+        <result column="college" property="college" />
+        <result column="profession" property="profession" />
+        <result column="password" property="password" />
+        <result column="phone" property="phone" />
+        <result column="email" property="email" />
+    </resultMap>
+
+    <resultMap id="StudentCourseResultMap" type="com.example.domain.StudentCourseRelation">
+        <result column="studentNo" property="studentNo" />
+        <result column="studentName" property="studentName" />
+        <result column="courseNo" property="courseNo" />
+        <result column="courseName" property="courseName" />
+        <result column="planId" property="planId" />
+    </resultMap>
+
+    <parameterMap id="Student" type="com.example.domain.StudentInfo"/>
+
+    <sql id="StudentInfo_Column_List">
+        studentNo,studentName,college,profession,password,phone,email
+    </sql>
+
+    <select id="findByStudentNo" resultMap="StudentInfoResultMap" parameterType="java.lang.String">
+        select
+        <include refid="StudentInfo_Column_List" />
+        from studentInfo
+        where studentNo = #{studentNo}
+    </select>
+
+    <select id="findStudentCoursesByStudentNo" resultMap="StudentCourseResultMap" parameterType="java.lang.String">
+        select
+        si.studentNo studentNo,si.studentName studentName,ci.courseNo courseNo,ci.courseName courseName,sc.planId planId
+        from studentCourseRelation sc
+        left join studentInfo si on sc.studentNO = si.studentNO
+        left join courseInfo ci on sc.courseNo = ci.courseNo
+        where sc.studentNo = #{studentNo}
+    </select>
+    
+    <insert id="signin" parameterType="com.example.domain.SignInfo">
+        insert into signInfo (studentNo,courseNo,planId, signTime,longitude,latitude) VALUES (#{studentNo},#{courseNo},#{planId}, #{signTime},#{longitude},#{latitude})
+    </insert>
+</mapper>
